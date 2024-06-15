@@ -82,7 +82,7 @@ print(encoder_model.summary())
 
 # DECODER
 
-decoder_input = tf.keras.layers.Input(shape = (2))
+decoder_input = tf.keras.layers.Input(shape = (2, ))
 
 decoder = tf.keras.layers.Dense(64)(decoder_input)
 
@@ -90,4 +90,14 @@ decoder = tf.keras.layers.Reshape((1, 1, 64))(decoder)
 
 decoder = tf.keras.layers.Conv2DTranspose(64, (3, 3), activation = 'relu')(decoder)
 
+decoder = tf.keras.layers.UpSampling2D((2, 2))(decoder)
 
+decoder = tf.keras.layers.Conv2DTranspose(1, (5, 5), activation = 'relu')(decoder)
+
+decoder = tf.keras.layers.UpSampling2D((2, 2))(decoder)
+
+decoder_output = tf.keras.layers.Conv2DTranspose(1, (5, 5), activation = 'relu')(decoder)
+
+decoder_model = tf.keras.Model(decoder_input, decoder_output)
+
+print(decoder_model.summary())
