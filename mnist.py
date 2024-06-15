@@ -41,6 +41,8 @@ print(train_data.shape, test_data.shape)
 
 input_data = tf.keras.layers.Input(shape = (28, 28, 1))
 
+# ENCODER
+
 encoder = tf.keras.layers.Conv2D(64, (5, 5), activation = 'relu')(input_data)
 
 encoder = tf.keras.layers.MaxPooling2D((2, 2))(encoder)
@@ -72,8 +74,20 @@ def sample_latent_features(distribution):
     return distribution_mean + tf.exp(0.5 * distribution_variance) * random
 
 
-sample_latent_encoding = tf.keras.layers.Lambda(sample_latent_features)([distribution_mean, distribution_variance])
+sampled_latent_encoding = tf.keras.layers.Lambda(sample_latent_features)([distribution_mean, distribution_variance])
 
-encoder_model = tf.keras.Model(input_data, sample_latent_encoding)
+encoder_model = tf.keras.Model(input_data, sampled_latent_encoding)
 
 print(encoder_model.summary())
+
+# DECODER
+
+decoder_input = tf.keras.layers.Input(shape = (2))
+
+decoder = tf.keras.layers.Dense(64)(decoder_input)
+
+decoder = tf.keras.layers.Reshape((1, 1, 64))(decoder)
+
+decoder = tf.keras.layers.Conv2DTranspose(64, (3, 3), activation = 'relu')(decoder)
+
+
